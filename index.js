@@ -21,7 +21,9 @@ app.get('/', async (req, res, next) => {
 app.post('/register', async (req, res, next) => {
   try{
     const {username, password} = req.body;
-    const user = await User.create({username : 'bobbysmiles', password :'youllneverguess'})
+    const hash = await bcrypt.hash(password, 8);
+    const user = await User.create({username : 'bobbysmiles', password :hash})
+    
 //     
 if(!user || !password){
   return res.status(401).send(
