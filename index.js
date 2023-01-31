@@ -40,34 +40,28 @@ next(error);
 }
 })
 
-
-// ;;;;;;;;;;;;;;;;;;
-// const hashPassword = async (password) =>{
-//   const hash = await bcrypt.hash(password, 8);
-//   console.log(hash);   
-//   return hash;
-// }
 // POST /login
 // TODO - takes req.body of {username, password}, finds user by username, and compares the password with the hashed version from the DB
 
 app.post('/login', async (req, res, next) => {
   try{
-    const loginA = {username: 'bobbysmiles', password: 'notright'};
-    const users = await User.findOne({where: {username: loginA.username}});
+    const {username, password} = req.body;
+    
+    const users = await User.findAll({where: {username}});
     if(!users[0]){
       return res.status(401).send(
        'incorrect username or password'
       );
     } 
     const user = users[0];
-    const isMatch = await bcrypt.compare(loginA.password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if(!isMatch){
-    return res.status(401).send(
+    res.status(401).send(
       'incorrect username or password'
-    )
+    );
   } else{
-    return res.status(200).send(
-    'successfully logged in user bobbysmiles'
+    res.status(200).send(
+    'successfully logged in user ' + username
     )
   }
   }catch(error){
